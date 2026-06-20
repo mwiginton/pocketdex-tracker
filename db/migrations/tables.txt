@@ -1,0 +1,153 @@
+create table public.sets (
+  id text primary key,
+  name text not null,
+  slug text not null unique,
+  release_date date,
+  official_card_count integer
+    check (official_card_count is null or official_card_count > 0),
+  total_card_count integer
+    check (total_card_count is null or total_card_count > 0),
+  is_promo boolean not null default false,
+  image_url text,
+  data_version text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint sets_card_counts_valid check (
+    official_card_count is null
+    or total_card_count is null
+    or total_card_count >= official_card_count
+  )
+);
+
+
+create table public.cards (
+  id text primary key,
+
+  set_id text not null
+    references public.sets(id)
+    on update cascade
+    on delete restrict,
+
+  collector_number integer not null check (collector_number > 0),
+  name text not null,
+  category text not null,
+  energy_type text,
+  trainer_type text,
+  rarity text not null,
+
+  variant_of_card_id text
+    references public.cards(id)
+    on update cascade
+    on delete set null,
+  image_url text,
+
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  constraint cards_set_number_unique
+    unique (set_id, collector_number),
+
+  constraint cards_category_valid
+    check (category in ('pokemon', 'trainer')),
+
+  constraint cards_type_fields_valid
+    check (
+      (category = 'pokemon' and trainer_type is null)
+      or
+      (category = 'trainer' and energy_type is null)
+    )
+);
+
+
+create table public.packs (
+  id text primary key,
+
+  set_id text not null
+    references public.sets(id)
+    on update cascade
+    on delete restrict,
+
+  name text not null,
+  slug text not null unique,
+
+  kind text not null default 'booster',
+
+  cards_per_pack smallint not null default 5
+    check (cards_per_pack > 0),
+
+  is_recommendable boolean not null default true,
+  sort_order smallint not null default 0,
+  image_url text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  constraint packs_set_name_unique unique (set_id, name)
+);
+
+create table public.card_pack_odds (
+  pack_id text not null
+    references public.packs(id)
+    on update cascade
+    on delete cascade,
+
+  card_id text not null
+    references public.cards(id)
+    on update cascade
+    on delete cascade,
+
+  pull_probability numeric(12, 10) not null
+    check (
+      pull_probability >= 0
+      and pull_probability <= 1
+    ),
+
+  source_note text,
+  verified_at date,
+
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  primary key (pack_id, card_id)
+);
+
+create index cards_set_id_idx
+  on public.cards(set_id);
+
+create index cards_name_idx
+  on public.cards(name);
+
+create index cards_rarity_idx
+  on public.cards(rarity);
+
+create index cards_energy_type_idx
+  on public.cards(energy_type);
+
+create index packs_set_id_idx
+  on public.packs(set_id);
+
+create index card_pack_odds_card_id_idx
+  on public.card_pack_odds(card_id);
+
+alter table public.sets enable row level security;
+alter table public.cards enable row level security;
+alter table public.packs enable row level security;
+alter table public.card_pack_odds enable row level security;
+
+create table public.user_cards (
+  user_id uuid not null
+    references auth.users(id)
+    on delete cascade,
+
+  card_id text not null
+    references public.cards(id)
+    on update cascade
+    on delete cascade,
+
+  owned_at timestamptz not null default now(),
+  primary key (user_id, card_id)
+);
+
+create index user_cards_card_id_idx
+  on public.user_cards(card_id);
+
+alter table public.user_cards enable row level security;

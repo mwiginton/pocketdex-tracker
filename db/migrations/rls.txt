@@ -1,0 +1,124 @@
+alter table public.sets enable row level security;
+alter table public.cards enable row level security;
+alter table public.packs enable row level security;
+alter table public.card_pack_odds enable row level security;
+alter table public.user_cards enable row level security;
+
+revoke all on table public.sets
+  from public, anon, authenticated;
+
+revoke all on table public.cards
+  from public, anon, authenticated;
+
+revoke all on table public.packs
+  from public, anon, authenticated;
+
+revoke all on table public.card_pack_odds
+  from public, anon, authenticated;
+
+revoke all on table public.user_cards
+  from public, anon, authenticated;
+
+grant select on table public.sets
+  to anon, authenticated;
+
+grant select on table public.cards
+  to anon, authenticated;
+
+grant select on table public.packs
+  to anon, authenticated;
+
+grant select on table public.card_pack_odds
+  to anon, authenticated;
+
+
+grant select, insert, update, delete
+  on table public.user_cards
+  to authenticated;
+
+drop policy if exists "Public can read sets"
+  on public.sets;
+
+drop policy if exists "Public can read cards"
+  on public.cards;
+
+drop policy if exists "Public can read packs"
+  on public.packs;
+
+drop policy if exists "Public can read card pack odds"
+  on public.card_pack_odds;
+
+drop policy if exists "Users can read their own cards"
+  on public.user_cards;
+
+drop policy if exists "Users can insert their own cards"
+  on public.user_cards;
+
+drop policy if exists "Users can update their own cards"
+  on public.user_cards;
+
+drop policy if exists "Users can delete their own cards"
+  on public.user_cards;
+
+create policy "Public can read sets"
+on public.sets
+for select
+to anon, authenticated
+using (true);
+
+
+create policy "Public can read cards"
+on public.cards
+for select
+to anon, authenticated
+using (true);
+
+
+create policy "Public can read packs"
+on public.packs
+for select
+to anon, authenticated
+using (true);
+
+
+create policy "Public can read card pack odds"
+on public.card_pack_odds
+for select
+to anon, authenticated
+using (true);
+
+create policy "Users can read their own cards"
+on public.user_cards
+for select
+to authenticated
+using (
+  (select auth.uid()) = user_id
+);
+
+create policy "Users can insert their own cards"
+on public.user_cards
+for insert
+to authenticated
+with check (
+  (select auth.uid()) = user_id
+);
+
+create policy "Users can update their own cards"
+on public.user_cards
+for update
+to authenticated
+using (
+  (select auth.uid()) = user_id
+)
+with check (
+  (select auth.uid()) = user_id
+);
+
+
+create policy "Users can delete their own cards"
+on public.user_cards
+for delete
+to authenticated
+using (
+  (select auth.uid()) = user_id
+);
