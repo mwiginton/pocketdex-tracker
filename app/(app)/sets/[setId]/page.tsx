@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { CollectionCard } from "@/components/collection-card";
+import { CollectionGrid } from "@/components/collection-grid";
 import { createClient } from "@/lib/supabase/server";
 
 type SetPageProps = {
@@ -58,7 +58,7 @@ async function SetDetails({ params }: SetPageProps) {
     throw new Error(userCardsError.message);
   }
 
-  const ownedCardIds = new Set(userCards.map((userCard) => userCard.card_id));
+  const ownedCardIds = userCards.map((userCard) => userCard.card_id);
 
   return (
     <div className="py-6 sm:py-8">
@@ -77,23 +77,11 @@ async function SetDetails({ params }: SetPageProps) {
         </div>
       </header>
 
-      {cards.length > 0 ? (
-        <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {cards.map((card) => (
-            <li key={card.id}>
-              <CollectionCard
-                card={card}
-                initiallyOwned={ownedCardIds.has(card.id)}
-                userId={authData.user.id}
-              />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-          This set does not have any cards yet.
-        </div>
-      )}
+      <CollectionGrid
+        cards={cards}
+        initialOwnedCardIds={ownedCardIds}
+        userId={authData.user.id}
+      />
     </div>
   );
 }

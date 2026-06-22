@@ -9,7 +9,7 @@ import type { Tables } from "@/lib/database.types";
 import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
-type CardData = Pick<
+export type CardData = Pick<
   Tables<"cards">,
   | "id"
   | "name"
@@ -23,12 +23,14 @@ type CardData = Pick<
 type CollectionCardProps = {
   card: CardData;
   initiallyOwned: boolean;
+  onOwnedChange: (owned: boolean) => void;
   userId: string;
 };
 
 export function CollectionCard({
   card,
   initiallyOwned,
+  onOwnedChange,
   userId,
 }: CollectionCardProps) {
   const [isOwned, setIsOwned] = useState(initiallyOwned);
@@ -55,7 +57,9 @@ export function CollectionCard({
     if (mutationError) {
       setError(mutationError.message);
     } else {
-      setIsOwned((owned) => !owned);
+      const nextOwned = !isOwned;
+      setIsOwned(nextOwned);
+      onOwnedChange(nextOwned);
     }
 
     setIsSaving(false);
