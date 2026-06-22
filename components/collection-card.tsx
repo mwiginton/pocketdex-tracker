@@ -22,25 +22,29 @@ export type CardData = Pick<
 
 type CollectionCardProps = {
   card: CardData;
-  initiallyOwned: boolean;
+  disabled?: boolean;
+  isOwned: boolean;
   onOwnedChange: (owned: boolean) => void;
+  onSavingChange: (saving: boolean) => void;
   userId: string;
 };
 
 export function CollectionCard({
   card,
-  initiallyOwned,
+  disabled = false,
+  isOwned,
   onOwnedChange,
+  onSavingChange,
   userId,
 }: CollectionCardProps) {
-  const [isOwned, setIsOwned] = useState(initiallyOwned);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const toggleOwned = async () => {
-    if (isSaving) return;
+    if (isSaving || disabled) return;
 
     setIsSaving(true);
+    onSavingChange(true);
     setError(null);
 
     const supabase = createClient();
@@ -58,11 +62,11 @@ export function CollectionCard({
       setError(mutationError.message);
     } else {
       const nextOwned = !isOwned;
-      setIsOwned(nextOwned);
       onOwnedChange(nextOwned);
     }
 
     setIsSaving(false);
+    onSavingChange(false);
   };
 
   return (
@@ -70,7 +74,7 @@ export function CollectionCard({
       <button
         type="button"
         onClick={toggleOwned}
-        disabled={isSaving}
+        disabled={isSaving || disabled}
         aria-pressed={isOwned}
         aria-label={`${card.name}, card ${card.collector_number}. ${isOwned ? "Owned" : "Missing"}. Tap to mark ${isOwned ? "missing" : "owned"}.`}
         className={cn(
