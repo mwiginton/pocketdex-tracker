@@ -1,8 +1,7 @@
-import Image from "next/image";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { Badge } from "@/components/ui/badge";
+import { CollectionCard } from "@/components/collection-card";
 import { createClient } from "@/lib/supabase/server";
 
 type SetPageProps = {
@@ -14,6 +13,11 @@ type SetPageProps = {
 async function SetDetails({ params }: SetPageProps) {
   const { setId } = await params;
   const supabase = await createClient();
+  const { data: authData, error: authError } = await supabase.auth.getUser();
+
+  if (authError || !authData.user) {
+    redirect("/auth/login");
+  }
 
   const [{ data: set, error: setError }, { data: cards, error: cardsError }] =
     await Promise.all([
@@ -41,6 +45,21 @@ async function SetDetails({ params }: SetPageProps) {
     notFound();
   }
 
+  const cardIds = cards.map((card) => card.id);
+  const { data: userCards, error: userCardsError } = cardIds.length
+    ? await supabase
+        .from("user_cards")
+        .select("card_id")
+        .eq("user_id", authData.user.id)
+        .in("card_id", cardIds)
+    : { data: [], error: null };
+
+  if (userCardsError) {
+    throw new Error(userCardsError.message);
+  }
+
+  const ownedCardIds = new Set(userCards.map((userCard) => userCard.card_id));
+
   return (
     <div className="py-6 sm:py-8">
       <header className="mb-6">
@@ -62,42 +81,11 @@ async function SetDetails({ params }: SetPageProps) {
         <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {cards.map((card) => (
             <li key={card.id}>
-              <article className="h-full overflow-hidden rounded-xl border bg-card shadow-sm">
-                <div className="relative aspect-[5/7] overflow-hidden bg-muted">
-                  {card.image_url ? (
-                    <Image
-                      src={card.image_url}
-                      alt={`${card.name} card`}
-                      fill
-                      sizes="(max-width: 640px) 46vw, (max-width: 768px) 30vw, (max-width: 1024px) 23vw, 190px"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center p-4 text-center text-xs text-muted-foreground">
-                      Image unavailable
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-2 p-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <h2 className="text-sm font-semibold leading-tight">
-                      {card.name}
-                    </h2>
-                    <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                      #{card.collector_number}
-                    </span>
-                  </div>
-                  <div className="flex flex-wrap gap-1.5">
-                    <Badge variant="secondary" className="capitalize">
-                      {card.rarity.replaceAll("_", " ")}
-                    </Badge>
-                    <Badge variant="outline" className="capitalize">
-                      {card.energy_type ?? card.category}
-                    </Badge>
-                  </div>
-                </div>
-              </article>
+              <CollectionCard
+                card={card}
+                initiallyOwned={ownedCardIds.has(card.id)}
+                userId={authData.user.id}
+              />
             </li>
           ))}
         </ul>
