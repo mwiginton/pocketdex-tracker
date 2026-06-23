@@ -28,7 +28,8 @@ export function CollectionGrid({
   );
   const [filter, setFilter] = useState<Filter>("all");
   const [bulkTarget, setBulkTarget] = useState<boolean | null>(null);
-  const [pendingCardCount, setPendingCardCount] = useState(0);
+  const [pendingCardIds, setPendingCardIds] = useState(() => new Set<string>());
+  const [cardErrors, setCardErrors] = useState(() => new Map<string, string>());
   const [bulkError, setBulkError] = useState<string | null>(null);
 
   const visibleCards = useMemo(
@@ -50,12 +51,55 @@ export function CollectionGrid({
     });
   };
 
-  const updatePendingCardCount = (saving: boolean) => {
-    setPendingCardCount((current) => Math.max(0, current + (saving ? 1 : -1)));
+  const updatePendingCard = (cardId: string, saving: boolean) => {
+    setPendingCardIds((current) => {
+      const next = new Set(current);
+      if (saving) next.add(cardId);
+      else next.delete(cardId);
+      return next;
+    });
+  };
+
+  const updateCardError = (cardId: string, message: string | null) => {
+    setCardErrors((current) => {
+      const next = new Map(current);
+      if (message) next.set(cardId, message);
+      else next.delete(cardId);
+      return next;
+    });
+  };
+
+  const toggleCardOwned = async (cardId: string, currentOwned: boolean) => {
+    if (bulkTarget !== null || pendingCardIds.has(cardId)) return;
+
+    const nextOwned = !currentOwned;
+
+    updateOwnedCard(cardId, nextOwned);
+    updatePendingCard(cardId, true);
+    updateCardError(cardId, null);
+    setBulkError(null);
+
+    const supabase = createClient();
+    const { error } = nextOwned
+      ? await supabase
+          .from("user_cards")
+          .upsert({ user_id: userId, card_id: cardId })
+      : await supabase
+          .from("user_cards")
+          .delete()
+          .eq("user_id", userId)
+          .eq("card_id", cardId);
+
+    if (error) {
+      updateOwnedCard(cardId, currentOwned);
+      updateCardError(cardId, error.message);
+    }
+
+    updatePendingCard(cardId, false);
   };
 
   const setAllOwned = async (owned: boolean) => {
-    if (bulkTarget !== null || pendingCardCount > 0) return;
+    if (bulkTarget !== null || pendingCardIds.size > 0) return;
 
     const affectedCardIds = cards
       .filter((card) => owned !== ownedCardIds.has(card.id))
@@ -90,7 +134,7 @@ export function CollectionGrid({
   };
 
   const isBulkSaving = bulkTarget !== null;
-  const controlsDisabled = isBulkSaving || pendingCardCount > 0;
+  const controlsDisabled = isBulkSaving || pendingCardIds.size > 0;
 
   return (
     <div className="space-y-5">
@@ -171,10 +215,12 @@ export function CollectionGrid({
               <CollectionCard
                 card={card}
                 disabled={isBulkSaving}
+                error={cardErrors.get(card.id)}
                 isOwned={ownedCardIds.has(card.id)}
-                onOwnedChange={(owned) => updateOwnedCard(card.id, owned)}
-                onSavingChange={updatePendingCardCount}
-                userId={userId}
+                isSaving={pendingCardIds.has(card.id)}
+                onToggleOwned={() =>
+                  toggleCardOwned(card.id, ownedCardIds.has(card.id))
+                }
               />
             </li>
           ))}

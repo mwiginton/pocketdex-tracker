@@ -2,11 +2,9 @@
 
 import { Check, LoaderCircle } from "lucide-react";
 import Image from "next/image";
-import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/lib/database.types";
-import { createClient } from "@/lib/supabase/client";
 import { cn } from "@/lib/utils";
 
 export type CardData = Pick<
@@ -23,57 +21,25 @@ export type CardData = Pick<
 type CollectionCardProps = {
   card: CardData;
   disabled?: boolean;
+  error?: string | null;
   isOwned: boolean;
-  onOwnedChange: (owned: boolean) => void;
-  onSavingChange: (saving: boolean) => void;
-  userId: string;
+  isSaving: boolean;
+  onToggleOwned: () => void;
 };
 
 export function CollectionCard({
   card,
   disabled = false,
+  error = null,
   isOwned,
-  onOwnedChange,
-  onSavingChange,
-  userId,
+  isSaving,
+  onToggleOwned,
 }: CollectionCardProps) {
-  const [isSaving, setIsSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const toggleOwned = async () => {
-    if (isSaving || disabled) return;
-
-    setIsSaving(true);
-    onSavingChange(true);
-    setError(null);
-
-    const supabase = createClient();
-    const { error: mutationError } = isOwned
-      ? await supabase
-          .from("user_cards")
-          .delete()
-          .eq("user_id", userId)
-          .eq("card_id", card.id)
-      : await supabase
-          .from("user_cards")
-          .upsert({ user_id: userId, card_id: card.id });
-
-    if (mutationError) {
-      setError(mutationError.message);
-    } else {
-      const nextOwned = !isOwned;
-      onOwnedChange(nextOwned);
-    }
-
-    setIsSaving(false);
-    onSavingChange(false);
-  };
-
   return (
     <div className="h-full">
       <button
         type="button"
-        onClick={toggleOwned}
+        onClick={onToggleOwned}
         disabled={isSaving || disabled}
         aria-pressed={isOwned}
         aria-label={`${card.name}, card ${card.collector_number}. ${isOwned ? "Owned" : "Missing"}. Tap to mark ${isOwned ? "missing" : "owned"}.`}
