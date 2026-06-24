@@ -5,6 +5,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "test:recommendations": "node -e \"require('fs').rmSync('.tmp-tests',{recursive:true,force:true})\" && tsc --module commonjs --target ES2022 --outDir .tmp-tests --rootDir . --noEmit false lib/recommendation/expected-value.ts lib/recommendation/expected-value.test.ts && node --test .tmp-tests/lib/recommendation/expected-value.test.js",
     "db:types": "node scripts/generate-database-types.mjs"
   },
   "dependencies": {
