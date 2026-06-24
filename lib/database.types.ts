@@ -242,7 +242,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_pack_recommendation_rows: {
+        Args: { scope_set_id?: string }
+        Returns: {
+          card_collector_number: number
+          card_id: string
+          card_name: string
+          card_rarity: string
+          card_set_id: string
+          pack_id: string
+          pack_name: string
+          pack_set_id: string
+          pack_slug: string
+          pack_sort_order: number
+          pull_probability: number
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
