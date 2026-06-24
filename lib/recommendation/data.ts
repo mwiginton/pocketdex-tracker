@@ -17,9 +17,10 @@ export async function loadPackRecommendations(
   supabase: SupabaseClient<Database>,
   scope?: RecommendationScope,
 ): Promise<PackRecommendation[]> {
-  const { data, error } = await supabase.rpc("get_pack_recommendation_rows", {
-    scope_set_id: scope?.setId ?? null,
-  });
+  const { data, error } = await supabase.rpc(
+    "get_pack_recommendation_rows",
+    scope?.setId ? { scope_set_id: scope.setId } : {},
+  );
 
   if (error) {
     throw new Error(error.message);
