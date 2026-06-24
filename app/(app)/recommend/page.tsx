@@ -1,4 +1,4 @@
-import { Sparkles } from "lucide-react";
+import { ChevronDown, Sparkles } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
@@ -68,35 +68,87 @@ async function RecommendContent() {
             {recommendations.map((recommendation, index) => (
               <li key={recommendation.pack.id}>
                 <Card className="shadow-sm">
-                  <CardContent className="flex items-center gap-3 p-4">
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-background text-sm font-semibold tabular-nums">
-                      {index + 1}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                        <h2 className="truncate text-base font-semibold">
-                          {recommendation.pack.name}
-                        </h2>
-                        <Badge variant="outline">
-                          {recommendation.pack.set_id}
-                        </Badge>
+                  <CardContent className="p-0">
+                    <details className="group">
+                      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 transition hover:bg-accent/50 [&::-webkit-details-marker]:hidden">
+                        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border bg-background text-sm font-semibold tabular-nums">
+                          {index + 1}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <h2 className="truncate text-base font-semibold">
+                              {recommendation.pack.name}
+                            </h2>
+                            <Badge variant="outline">
+                              {recommendation.pack.set_id}
+                            </Badge>
+                          </div>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {recommendation.missingCardCount} missing{" "}
+                            {recommendation.missingCardCount === 1
+                              ? "card"
+                              : "cards"}{" "}
+                            with pull odds
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <p className="text-lg font-bold tabular-nums">
+                            {formatExpectedNewCards(
+                              recommendation.expectedNewCards,
+                            )}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            new / pack
+                          </p>
+                        </div>
+                        <ChevronDown
+                          className="h-4 w-4 shrink-0 text-muted-foreground transition group-open:rotate-180"
+                          aria-hidden="true"
+                        />
+                      </summary>
+
+                      <div className="border-t px-4 pb-4 pt-3">
+                        <div className="mb-3 flex items-center justify-between gap-3">
+                          <h3 className="text-sm font-semibold">
+                            Missing cards this pack can pull
+                          </h3>
+                          <span className="text-xs text-muted-foreground">
+                            {recommendation.cards.length} total
+                          </span>
+                        </div>
+                        <ul className="max-h-80 space-y-2 overflow-y-auto pr-1">
+                          {recommendation.cards.map(({ card, pullProbability }) => (
+                            <li
+                              key={card.id}
+                              className="flex items-center gap-3 rounded-md border bg-background p-3"
+                            >
+                              <span className="w-10 shrink-0 text-sm tabular-nums text-muted-foreground">
+                                #{card.collector_number}
+                              </span>
+                              <div className="min-w-0 flex-1">
+                                <p className="truncate text-sm font-medium">
+                                  {card.name}
+                                </p>
+                                <Badge
+                                  variant="secondary"
+                                  className="mt-1 capitalize"
+                                >
+                                  {formatRarity(card.rarity)}
+                                </Badge>
+                              </div>
+                              <div className="text-right">
+                                <p className="text-sm font-semibold tabular-nums">
+                                  {formatPullProbability(pullProbability)}
+                                </p>
+                                <p className="text-xs text-muted-foreground">
+                                  chance
+                                </p>
+                              </div>
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {recommendation.missingCardCount} missing{" "}
-                        {recommendation.missingCardCount === 1
-                          ? "card"
-                          : "cards"}{" "}
-                        with pull odds
-                      </p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-lg font-bold tabular-nums">
-                        {formatExpectedNewCards(recommendation.expectedNewCards)}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        new / pack
-                      </p>
-                    </div>
+                    </details>
                   </CardContent>
                 </Card>
               </li>
@@ -132,6 +184,18 @@ function formatExpectedNewCards(value: number) {
     maximumFractionDigits: 2,
     minimumFractionDigits: value > 0 && value < 0.01 ? 4 : 2,
   }).format(value);
+}
+
+function formatPullProbability(value: number) {
+  return new Intl.NumberFormat("en", {
+    maximumFractionDigits: 2,
+    minimumFractionDigits: value > 0 && value < 0.0001 ? 4 : 2,
+    style: "percent",
+  }).format(value);
+}
+
+function formatRarity(rarity: string) {
+  return rarity.replaceAll("_", " ");
 }
 
 export default function RecommendPage() {
