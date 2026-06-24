@@ -1,13 +1,27 @@
 import { ChevronDown, Sparkles } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { loadPackRecommendations } from "@/lib/recommendation/data";
 import { createClient } from "@/lib/supabase/server";
 
-async function RecommendContent() {
+type RecommendPageProps = {
+  searchParams: Promise<{
+    setId?: string | string[];
+  }>;
+};
+
+type RecommendationSet = {
+  id: string;
+  name: string;
+};
+
+async function RecommendContent({ searchParams }: RecommendPageProps) {
+  const selectedSetId = getSelectedSetId(await searchParams);
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.getUser();
 
@@ -15,7 +29,19 @@ async function RecommendContent() {
     redirect("/auth/login");
   }
 
-  const recommendations = await loadPackRecommendations(supabase);
+  const { data: sets, error: setsError } = await supabase
+    .from("sets")
+    .select("id, name")
+    .order("release_date", { ascending: false, nullsFirst: false })
+    .order("id", { ascending: true });
+
+  if (setsError) {
+    throw new Error(setsError.message);
+  }
+
+  const selectedSet = sets.find((set) => set.id === selectedSetId);
+  const scope = selectedSet ? { setId: selectedSet.id } : undefined;
+  const recommendations = await loadPackRecommendations(supabase, scope);
   const topRecommendation = recommendations[0];
 
   return (
@@ -28,6 +54,8 @@ async function RecommendContent() {
           What should I open?
         </h1>
       </header>
+
+      <ScopeToggle sets={sets} selectedSet={selectedSet} />
 
       {topRecommendation ? (
         <div className="space-y-4">
@@ -52,7 +80,9 @@ async function RecommendContent() {
                   </Badge>
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  Best current expected value across your missing cards.
+                  {selectedSet
+                    ? `Best expected value for ${selectedSet.name}.`
+                    : "Best current expected value across your missing cards."}
                 </p>
               </div>
             </div>
@@ -157,10 +187,52 @@ async function RecommendContent() {
         </div>
       ) : (
         <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No pack recommendations are available yet.
+          No pack recommendations are available for this scope.
         </div>
       )}
     </div>
+  );
+}
+
+function ScopeToggle({
+  sets,
+  selectedSet,
+}: {
+  sets: RecommendationSet[];
+  selectedSet?: RecommendationSet;
+}) {
+  return (
+    <section aria-label="Recommendation scope" className="mb-6 space-y-3">
+      <p className="text-sm font-medium text-muted-foreground">Scope</p>
+      <div className="flex gap-2 overflow-x-auto pb-1">
+        <Button
+          asChild
+          type="button"
+          size="sm"
+          variant={selectedSet ? "outline" : "default"}
+        >
+          <Link href="/recommend" aria-current={selectedSet ? undefined : "page"}>
+            Whole collection
+          </Link>
+        </Button>
+        {sets.map((set) => (
+          <Button
+            asChild
+            key={set.id}
+            type="button"
+            size="sm"
+            variant={selectedSet?.id === set.id ? "default" : "outline"}
+          >
+            <Link
+              href={`/recommend?setId=${encodeURIComponent(set.id)}`}
+              aria-current={selectedSet?.id === set.id ? "page" : undefined}
+            >
+              {set.name}
+            </Link>
+          </Button>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -198,10 +270,16 @@ function formatRarity(rarity: string) {
   return rarity.replaceAll("_", " ");
 }
 
-export default function RecommendPage() {
+function getSelectedSetId(searchParams: Awaited<RecommendPageProps["searchParams"]>) {
+  return typeof searchParams.setId === "string" && searchParams.setId.length > 0
+    ? searchParams.setId
+    : undefined;
+}
+
+export default function RecommendPage({ searchParams }: RecommendPageProps) {
   return (
     <Suspense fallback={<RecommendSkeleton />}>
-      <RecommendContent />
+      <RecommendContent searchParams={searchParams} />
     </Suspense>
   );
 }
