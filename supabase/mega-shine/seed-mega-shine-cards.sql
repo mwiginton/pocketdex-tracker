@@ -1,0 +1,170 @@
+-- Mega Shine (B2b): 69 main-set cards and 48 secret cards.
+-- Source checked 2026-06-25: https://pocket.limitlesstcg.com/cards/B2b?display=list&show=all
+--
+-- Rarity convention:
+-- diamond_1 .. diamond_4, star_1 .. star_3, crown
+--
+-- Image URLs below are third-party CDN URLs. Mirror appropriately licensed
+-- assets into storage you control before relying on them in production.
+
+begin;
+
+insert into public.cards (
+  id, set_id, collector_number, name, category,
+  energy_type, trainer_type, rarity, variant_of_card_id, image_url
+) values
+  ('B2b-001', 'B2b', 1, 'Scyther', 'pokemon', 'grass', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_001_EN_SM.webp'),
+  ('B2b-002', 'B2b', 2, 'Pineco', 'pokemon', 'grass', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_002_EN_SM.webp'),
+  ('B2b-003', 'B2b', 3, 'Volbeat', 'pokemon', 'grass', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_003_EN_SM.webp'),
+  ('B2b-004', 'B2b', 4, 'Illumise', 'pokemon', 'grass', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_004_EN_SM.webp'),
+  ('B2b-005', 'B2b', 5, 'Phantump', 'pokemon', 'grass', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_005_EN_SM.webp'),
+  ('B2b-006', 'B2b', 6, 'Trevenant', 'pokemon', 'grass', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_006_EN_SM.webp'),
+  ('B2b-007', 'B2b', 7, 'Charmander', 'pokemon', 'fire', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_007_EN_SM.webp'),
+  ('B2b-008', 'B2b', 8, 'Charmeleon', 'pokemon', 'fire', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_008_EN_SM.webp'),
+  ('B2b-009', 'B2b', 9, 'Mega Charizard X ex', 'pokemon', 'fire', null, 'diamond_4', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_009_EN_SM.webp'),
+  ('B2b-010', 'B2b', 10, 'Ponyta', 'pokemon', 'fire', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_010_EN_SM.webp'),
+  ('B2b-011', 'B2b', 11, 'Rapidash', 'pokemon', 'fire', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_011_EN_SM.webp'),
+  ('B2b-012', 'B2b', 12, 'Magmar', 'pokemon', 'fire', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_012_EN_SM.webp'),
+  ('B2b-013', 'B2b', 13, 'Magmortar', 'pokemon', 'fire', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_013_EN_SM.webp'),
+  ('B2b-014', 'B2b', 14, 'Paldean Tauros', 'pokemon', 'fire', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_014_EN_SM.webp'),
+  ('B2b-015', 'B2b', 15, 'Slowpoke', 'pokemon', 'water', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_015_EN_SM.webp'),
+  ('B2b-016', 'B2b', 16, 'Mega Slowbro ex', 'pokemon', 'water', null, 'diamond_4', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_016_EN_SM.webp'),
+  ('B2b-017', 'B2b', 17, 'Lapras', 'pokemon', 'water', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_017_EN_SM.webp'),
+  ('B2b-018', 'B2b', 18, 'Piplup', 'pokemon', 'water', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_018_EN_SM.webp'),
+  ('B2b-019', 'B2b', 19, 'Prinplup', 'pokemon', 'water', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_019_EN_SM.webp'),
+  ('B2b-020', 'B2b', 20, 'Empoleon', 'pokemon', 'water', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_020_EN_SM.webp'),
+  ('B2b-021', 'B2b', 21, 'Phione', 'pokemon', 'water', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_021_EN_SM.webp'),
+  ('B2b-022', 'B2b', 22, 'Pikachu', 'pokemon', 'lightning', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_022_EN_SM.webp'),
+  ('B2b-023', 'B2b', 23, 'Raichu', 'pokemon', 'lightning', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_023_EN_SM.webp'),
+  ('B2b-024', 'B2b', 24, 'Electabuzz', 'pokemon', 'lightning', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_024_EN_SM.webp'),
+  ('B2b-025', 'B2b', 25, 'Electivire', 'pokemon', 'lightning', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_025_EN_SM.webp'),
+  ('B2b-026', 'B2b', 26, 'Electrike', 'pokemon', 'lightning', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_026_EN_SM.webp'),
+  ('B2b-027', 'B2b', 27, 'Mega Manectric ex', 'pokemon', 'lightning', null, 'diamond_4', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_027_EN_SM.webp'),
+  ('B2b-028', 'B2b', 28, 'Drowzee', 'pokemon', 'psychic', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_028_EN_SM.webp'),
+  ('B2b-029', 'B2b', 29, 'Hypno', 'pokemon', 'psychic', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_029_EN_SM.webp'),
+  ('B2b-030', 'B2b', 30, 'Mew', 'pokemon', 'psychic', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_030_EN_SM.webp'),
+  ('B2b-031', 'B2b', 31, 'Spoink', 'pokemon', 'psychic', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_031_EN_SM.webp'),
+  ('B2b-032', 'B2b', 32, 'Grumpig', 'pokemon', 'psychic', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_032_EN_SM.webp'),
+  ('B2b-033', 'B2b', 33, 'Diglett', 'pokemon', 'fighting', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_033_EN_SM.webp'),
+  ('B2b-034', 'B2b', 34, 'Dugtrio', 'pokemon', 'fighting', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_034_EN_SM.webp'),
+  ('B2b-035', 'B2b', 35, 'Groudon', 'pokemon', 'fighting', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_035_EN_SM.webp'),
+  ('B2b-036', 'B2b', 36, 'Hawlucha', 'pokemon', 'fighting', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_036_EN_SM.webp'),
+  ('B2b-037', 'B2b', 37, 'Gastly', 'pokemon', 'darkness', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_037_EN_SM.webp'),
+  ('B2b-038', 'B2b', 38, 'Haunter', 'pokemon', 'darkness', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_038_EN_SM.webp'),
+  ('B2b-039', 'B2b', 39, 'Mega Gengar ex', 'pokemon', 'darkness', null, 'diamond_4', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_039_EN_SM.webp'),
+  ('B2b-040', 'B2b', 40, 'Darkrai', 'pokemon', 'darkness', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_040_EN_SM.webp'),
+  ('B2b-041', 'B2b', 41, 'Trubbish', 'pokemon', 'darkness', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_041_EN_SM.webp'),
+  ('B2b-042', 'B2b', 42, 'Garbodor', 'pokemon', 'darkness', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_042_EN_SM.webp'),
+  ('B2b-043', 'B2b', 43, 'Zorua', 'pokemon', 'darkness', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_043_EN_SM.webp'),
+  ('B2b-044', 'B2b', 44, 'Zoroark', 'pokemon', 'darkness', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_044_EN_SM.webp'),
+  ('B2b-045', 'B2b', 45, 'Morpeko', 'pokemon', 'darkness', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_045_EN_SM.webp'),
+  ('B2b-046', 'B2b', 46, 'Forretress', 'pokemon', 'metal', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_046_EN_SM.webp'),
+  ('B2b-047', 'B2b', 47, 'Mega Scizor ex', 'pokemon', 'metal', null, 'diamond_4', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_047_EN_SM.webp'),
+  ('B2b-048', 'B2b', 48, 'Kartana', 'pokemon', 'metal', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_048_EN_SM.webp'),
+  ('B2b-049', 'B2b', 49, 'Varoom', 'pokemon', 'metal', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_049_EN_SM.webp'),
+  ('B2b-050', 'B2b', 50, 'Revavroom', 'pokemon', 'metal', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_050_EN_SM.webp'),
+  ('B2b-051', 'B2b', 51, 'Dratini', 'pokemon', 'dragon', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_051_EN_SM.webp'),
+  ('B2b-052', 'B2b', 52, 'Dragonair', 'pokemon', 'dragon', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_052_EN_SM.webp'),
+  ('B2b-053', 'B2b', 53, 'Dragonite', 'pokemon', 'dragon', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_053_EN_SM.webp'),
+  ('B2b-054', 'B2b', 54, 'Axew', 'pokemon', 'dragon', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_054_EN_SM.webp'),
+  ('B2b-055', 'B2b', 55, 'Fraxure', 'pokemon', 'dragon', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_055_EN_SM.webp'),
+  ('B2b-056', 'B2b', 56, 'Haxorus', 'pokemon', 'dragon', null, 'diamond_3', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_056_EN_SM.webp'),
+  ('B2b-057', 'B2b', 57, 'Druddigon', 'pokemon', 'dragon', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_057_EN_SM.webp'),
+  ('B2b-058', 'B2b', 58, 'Jigglypuff', 'pokemon', 'colorless', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_058_EN_SM.webp'),
+  ('B2b-059', 'B2b', 59, 'Wigglytuff', 'pokemon', 'colorless', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_059_EN_SM.webp'),
+  ('B2b-060', 'B2b', 60, 'Miltank', 'pokemon', 'colorless', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_060_EN_SM.webp'),
+  ('B2b-061', 'B2b', 61, 'Chatot', 'pokemon', 'colorless', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_061_EN_SM.webp'),
+  ('B2b-062', 'B2b', 62, 'Minccino', 'pokemon', 'colorless', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_062_EN_SM.webp'),
+  ('B2b-063', 'B2b', 63, 'Cinccino', 'pokemon', 'colorless', null, 'diamond_1', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_063_EN_SM.webp'),
+  ('B2b-064', 'B2b', 64, 'Furfrou', 'pokemon', 'colorless', null, 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_064_EN_SM.webp'),
+  ('B2b-065', 'B2b', 65, 'Nasty Notice', 'trainer', null, 'item', 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_065_EN_SM.webp'),
+  ('B2b-066', 'B2b', 66, 'Maintenance', 'trainer', null, 'item', 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_066_EN_SM.webp'),
+  ('B2b-067', 'B2b', 67, 'Iris', 'trainer', null, 'supporter', 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_067_EN_SM.webp'),
+  ('B2b-068', 'B2b', 68, 'Calem', 'trainer', null, 'supporter', 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_068_EN_SM.webp'),
+  ('B2b-069', 'B2b', 69, 'Hiking Trail', 'trainer', null, 'stadium', 'diamond_2', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_069_EN_SM.webp')
+on conflict (id) do update set
+  set_id = excluded.set_id,
+  collector_number = excluded.collector_number,
+  name = excluded.name,
+  category = excluded.category,
+  energy_type = excluded.energy_type,
+  trainer_type = excluded.trainer_type,
+  rarity = excluded.rarity,
+  variant_of_card_id = excluded.variant_of_card_id,
+  image_url = excluded.image_url,
+  updated_at = now();
+
+-- Insert secret-art variants after their referenced base cards.
+insert into public.cards (
+  id, set_id, collector_number, name, category,
+  energy_type, trainer_type, rarity, variant_of_card_id, image_url
+) values
+  ('B2b-070', 'B2b', 70, 'Lapras', 'pokemon', 'water', null, 'star_1', 'B2b-017', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_070_EN_SM.webp'),
+  ('B2b-071', 'B2b', 71, 'Empoleon', 'pokemon', 'water', null, 'star_1', 'B2b-020', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_071_EN_SM.webp'),
+  ('B2b-072', 'B2b', 72, 'Groudon', 'pokemon', 'fighting', null, 'star_1', 'B2b-035', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_072_EN_SM.webp'),
+  ('B2b-073', 'B2b', 73, 'Morpeko', 'pokemon', 'darkness', null, 'star_1', 'B2b-045', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_073_EN_SM.webp'),
+  ('B2b-074', 'B2b', 74, 'Revavroom', 'pokemon', 'metal', null, 'star_1', 'B2b-050', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_074_EN_SM.webp'),
+  ('B2b-075', 'B2b', 75, 'Miltank', 'pokemon', 'colorless', null, 'star_1', 'B2b-060', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_075_EN_SM.webp'),
+  ('B2b-076', 'B2b', 76, 'Mega Charizard X ex', 'pokemon', 'fire', null, 'star_2', 'B2b-009', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_076_EN_SM.webp'),
+  ('B2b-077', 'B2b', 77, 'Mega Slowbro ex', 'pokemon', 'water', null, 'star_2', 'B2b-016', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_077_EN_SM.webp'),
+  ('B2b-078', 'B2b', 78, 'Mega Manectric ex', 'pokemon', 'lightning', null, 'star_2', 'B2b-027', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_078_EN_SM.webp'),
+  ('B2b-079', 'B2b', 79, 'Mega Gengar ex', 'pokemon', 'darkness', null, 'star_2', 'B2b-039', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_079_EN_SM.webp'),
+  ('B2b-080', 'B2b', 80, 'Mega Scizor ex', 'pokemon', 'metal', null, 'star_2', 'B2b-047', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_080_EN_SM.webp'),
+  ('B2b-081', 'B2b', 81, 'Iris', 'trainer', null, 'supporter', 'star_2', 'B2b-067', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_081_EN_SM.webp'),
+  ('B2b-082', 'B2b', 82, 'Calem', 'trainer', null, 'supporter', 'star_2', 'B2b-068', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_082_EN_SM.webp'),
+  ('B2b-083', 'B2b', 83, 'Mega Slowbro ex', 'pokemon', 'water', null, 'star_2', 'B2b-016', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_083_EN_SM.webp'),
+  ('B2b-084', 'B2b', 84, 'Mega Manectric ex', 'pokemon', 'lightning', null, 'star_2', 'B2b-027', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_084_EN_SM.webp'),
+  ('B2b-085', 'B2b', 85, 'Mew', 'pokemon', 'psychic', null, 'star_3', 'B2b-030', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_085_EN_SM.webp'),
+  ('B2b-086', 'B2b', 86, 'Mew', 'pokemon', 'psychic', null, 'star_3', 'B2b-030', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_086_EN_SM.webp'),
+  ('B2b-087', 'B2b', 87, 'Scyther', 'pokemon', 'grass', null, 'star_1', 'B2b-001', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_087_EN_SM.webp'),
+  ('B2b-088', 'B2b', 88, 'Pineco', 'pokemon', 'grass', null, 'star_1', 'B2b-002', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_088_EN_SM.webp'),
+  ('B2b-089', 'B2b', 89, 'Phantump', 'pokemon', 'grass', null, 'star_1', 'B2b-005', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_089_EN_SM.webp'),
+  ('B2b-090', 'B2b', 90, 'Trevenant', 'pokemon', 'grass', null, 'star_1', 'B2b-006', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_090_EN_SM.webp'),
+  ('B2b-091', 'B2b', 91, 'Charmander', 'pokemon', 'fire', null, 'star_1', 'B2b-007', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_091_EN_SM.webp'),
+  ('B2b-092', 'B2b', 92, 'Charmeleon', 'pokemon', 'fire', null, 'star_1', 'B2b-008', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_092_EN_SM.webp'),
+  ('B2b-093', 'B2b', 93, 'Ponyta', 'pokemon', 'fire', null, 'star_1', 'B2b-010', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_093_EN_SM.webp'),
+  ('B2b-094', 'B2b', 94, 'Rapidash', 'pokemon', 'fire', null, 'star_1', 'B2b-011', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_094_EN_SM.webp'),
+  ('B2b-095', 'B2b', 95, 'Slowpoke', 'pokemon', 'water', null, 'star_1', 'B2b-015', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_095_EN_SM.webp'),
+  ('B2b-096', 'B2b', 96, 'Pikachu', 'pokemon', 'lightning', null, 'star_1', 'B2b-022', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_096_EN_SM.webp'),
+  ('B2b-097', 'B2b', 97, 'Raichu', 'pokemon', 'lightning', null, 'star_1', 'B2b-023', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_097_EN_SM.webp'),
+  ('B2b-098', 'B2b', 98, 'Electrike', 'pokemon', 'lightning', null, 'star_1', 'B2b-026', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_098_EN_SM.webp'),
+  ('B2b-099', 'B2b', 99, 'Hawlucha', 'pokemon', 'fighting', null, 'star_1', 'B2b-036', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_099_EN_SM.webp'),
+  ('B2b-100', 'B2b', 100, 'Gastly', 'pokemon', 'darkness', null, 'star_1', 'B2b-037', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_100_EN_SM.webp'),
+  ('B2b-101', 'B2b', 101, 'Haunter', 'pokemon', 'darkness', null, 'star_1', 'B2b-038', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_101_EN_SM.webp'),
+  ('B2b-102', 'B2b', 102, 'Zorua', 'pokemon', 'darkness', null, 'star_1', 'B2b-043', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_102_EN_SM.webp'),
+  ('B2b-103', 'B2b', 103, 'Zoroark', 'pokemon', 'darkness', null, 'star_1', 'B2b-044', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_103_EN_SM.webp'),
+  ('B2b-104', 'B2b', 104, 'Forretress', 'pokemon', 'metal', null, 'star_1', 'B2b-046', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_104_EN_SM.webp'),
+  ('B2b-105', 'B2b', 105, 'Dratini', 'pokemon', 'dragon', null, 'star_1', 'B2b-051', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_105_EN_SM.webp'),
+  ('B2b-106', 'B2b', 106, 'Dragonair', 'pokemon', 'dragon', null, 'star_1', 'B2b-052', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_106_EN_SM.webp'),
+  ('B2b-107', 'B2b', 107, 'Dragonite', 'pokemon', 'dragon', null, 'star_1', 'B2b-053', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_107_EN_SM.webp'),
+  ('B2b-108', 'B2b', 108, 'Axew', 'pokemon', 'dragon', null, 'star_1', 'B2b-054', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_108_EN_SM.webp'),
+  ('B2b-109', 'B2b', 109, 'Fraxure', 'pokemon', 'dragon', null, 'star_1', 'B2b-055', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_109_EN_SM.webp'),
+  ('B2b-110', 'B2b', 110, 'Haxorus', 'pokemon', 'dragon', null, 'star_1', 'B2b-056', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_110_EN_SM.webp'),
+  ('B2b-111', 'B2b', 111, 'Mega Charizard X ex', 'pokemon', 'fire', null, 'star_2', 'B2b-009', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_111_EN_SM.webp'),
+  ('B2b-112', 'B2b', 112, 'Mega Slowbro ex', 'pokemon', 'water', null, 'star_2', 'B2b-016', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_112_EN_SM.webp'),
+  ('B2b-113', 'B2b', 113, 'Mega Manectric ex', 'pokemon', 'lightning', null, 'star_2', 'B2b-027', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_113_EN_SM.webp'),
+  ('B2b-114', 'B2b', 114, 'Mega Gengar ex', 'pokemon', 'darkness', null, 'star_2', 'B2b-039', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_114_EN_SM.webp'),
+  ('B2b-115', 'B2b', 115, 'Mega Scizor ex', 'pokemon', 'metal', null, 'star_2', 'B2b-047', 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_115_EN_SM.webp'),
+  ('B2b-116', 'B2b', 116, 'Arboliva', 'pokemon', 'grass', null, 'crown', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_116_EN_SM.webp'),
+  ('B2b-117', 'B2b', 117, 'Metal Core Barrier', 'trainer', null, 'pokemon_tool', 'crown', null, 'https://limitlesstcg.nyc3.cdn.digitaloceanspaces.com/pocket/B2b/B2b_117_EN_SM.webp')
+on conflict (id) do update set
+  set_id = excluded.set_id,
+  collector_number = excluded.collector_number,
+  name = excluded.name,
+  category = excluded.category,
+  energy_type = excluded.energy_type,
+  trainer_type = excluded.trainer_type,
+  rarity = excluded.rarity,
+  variant_of_card_id = excluded.variant_of_card_id,
+  image_url = excluded.image_url,
+  updated_at = now();
+
+commit;
+
+-- Expected result: 117 cards, numbered 1 through 117.
+select
+  count(*) as card_count,
+  min(collector_number) as first_number,
+  max(collector_number) as last_number
+from public.cards
+where set_id = 'B2b';

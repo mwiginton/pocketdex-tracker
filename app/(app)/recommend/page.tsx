@@ -252,16 +252,20 @@ function RecommendSkeleton() {
 }
 
 function formatExpectedNewCards(value: number) {
+  const fractionDigits = value > 0 && value < 0.01 ? 4 : 2;
+
   return new Intl.NumberFormat("en", {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: value > 0 && value < 0.01 ? 4 : 2,
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: fractionDigits,
   }).format(value);
 }
 
 function formatPullProbability(value: number) {
+  const fractionDigits = value > 0 && value < 0.0001 ? 4 : 2;
+
   return new Intl.NumberFormat("en", {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: value > 0 && value < 0.0001 ? 4 : 2,
+    maximumFractionDigits: fractionDigits,
+    minimumFractionDigits: fractionDigits,
     style: "percent",
   }).format(value);
 }
