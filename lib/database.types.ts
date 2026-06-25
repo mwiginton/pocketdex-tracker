@@ -242,6 +242,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_home_set_completion_rows: {
+        Args: never
+        Returns: {
+          data_version: string
+          image_url: string
+          missing_cards: number
+          owned_cards: number
+          release_date: string
+          set_id: string
+          set_name: string
+          set_slug: string
+          total_cards: number
+        }[]
+      }
       get_pack_recommendation_rows: {
         Args: { scope_set_id?: string }
         Returns: {
