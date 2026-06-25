@@ -1,109 +1,148 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# PocketDex Tracker
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
-
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+PocketDex Tracker is a Next.js app for tracking a Pokemon TCG Pocket card
+collection and deciding which packs are worth opening next. It uses Supabase for
+authentication, card metadata, per-user ownership state, and SQL helpers that
+feed the pack recommendation engine.
 
 ## Features
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Proxy
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+- Email/password authentication through Supabase Auth.
+- Signed-in collection dashboard with overall completion and set-level progress.
+- Set detail pages with card grids, owned/missing filters, and bulk mark/unmark
+  actions.
+- Card search with filters for set, rarity, type, and ownership status.
+- Pack recommendations ranked by expected new cards per pack, with optional
+  set-specific scoping.
+- Seed SQL for multiple TCG Pocket sets, packs, cards, and pull odds.
+- Focused recommendation tests for expected-value and database-row shaping logic.
 
-## Demo
+## Tech stack
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+- [Next.js](https://nextjs.org/) App Router
+- [React](https://react.dev/) 19
+- [Supabase](https://supabase.com/) Auth, Postgres, RLS, and generated types
+- [Tailwind CSS](https://tailwindcss.com/)
+- [shadcn/ui](https://ui.shadcn.com/) style components
+- [Lucide React](https://lucide.dev/) icons
 
-## Deploy to Vercel
+## Getting started
 
-Vercel deployment will guide you through creating a Supabase account and project.
+Install dependencies:
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+```bash
+npm install
+```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+Create a local environment file:
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+```bash
+cp .env.example .env.local
+```
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
+Update `.env.local` with your Supabase project values:
 
-## Clone and run locally
+```env
+NEXT_PUBLIC_SUPABASE_URL=your-project-url
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your-publishable-or-anon-key
+```
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+Run the development server:
 
-2. Create a Next.js app using the Supabase Starter template npx command
+```bash
+npm run dev
+```
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+Open [http://localhost:3000](http://localhost:3000). Signed-out users are sent
+to `/auth/login`.
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+## Supabase setup
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+The project expects the tables, RLS policies, RPC functions, and seed data in
+the `supabase/` directory.
 
-3. Use `cd` to change into the app's directory
+Apply the base schema first:
 
-   ```bash
-   cd with-supabase-app
-   ```
+1. `supabase/schema/tables.txt`
+2. `supabase/schema/rls.txt`
+3. `supabase/home-set-completion-rpc.sql`
+4. `supabase/recommendation-rows-rpc.sql`
 
-4. Rename `.env.example` to `.env.local` and update the following:
+Then apply the set seed files you want to load. Most set directories contain
+separate files for:
 
-  ```env
-  NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-  NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=[INSERT SUPABASE PROJECT API PUBLISHABLE OR ANON KEY]
-  ```
-  > [!NOTE]
-  > This example uses `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, which refers to Supabase's new **publishable** key format.
-  > Both legacy **anon** keys and new **publishable** keys can be used with this variable name during the transition period. Supabase's dashboard may show `NEXT_PUBLIC_SUPABASE_ANON_KEY`; its value can be used in this example.
-  > See the [full announcement](https://github.com/orgs/supabase/discussions/29260) for more information.
+- `seed-sets-*.sql`
+- `seed-packs-*.sql`
+- `seed-*-cards.sql`
+- `seed-*-odds.sql`
 
-  Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+After changing the hosted Supabase schema, regenerate TypeScript database types:
 
-5. You can now run the Next.js local development server:
+```bash
+npm run db:types
+```
 
-   ```bash
-   npm run dev
-   ```
+The type generation script reads `NEXT_PUBLIC_SUPABASE_URL` from the environment
+or `.env.local`. It also requires Supabase CLI authentication through
+`npx supabase login` or `SUPABASE_ACCESS_TOKEN`.
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+## Scripts
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+```bash
+npm run dev
+```
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+Starts the local Next.js development server.
 
-## Feedback and issues
+```bash
+npm run build
+```
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+Builds the production app.
 
-## More Supabase examples
+```bash
+npm run start
+```
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+Runs the production build.
+
+```bash
+npm run lint
+```
+
+Runs ESLint across the project.
+
+```bash
+npm run test:recommendations
+```
+
+Compiles and runs the recommendation unit tests with Node's built-in test
+runner.
+
+```bash
+npm run db:types
+```
+
+Regenerates `lib/database.types.ts` from the configured Supabase project.
+
+## Project structure
+
+```text
+app/                 Next.js routes, layouts, auth pages, and app pages
+components/          Reusable UI, navigation, auth, collection, and search pieces
+lib/                 Supabase clients, generated database types, and app logic
+lib/recommendation/  Expected-value recommendation engine and tests
+scripts/             Seed/type generation helpers
+supabase/            Schema notes, RPC SQL, and set seed SQL
+```
+
+## Notes for maintainers
+
+- `user_cards` is the only user-owned collection table. Card, pack, set, and
+  odds tables are public read data guarded by RLS policies.
+- Recommendations are based on missing cards with pull odds returned by
+  `get_pack_recommendation_rows`.
+- The home dashboard uses `get_home_set_completion_rows` to avoid fetching every
+  card row just to calculate completion totals.
+- `lib/recommendation/data.ts` contains the current list of unavailable packs
+  that should be hidden from recommendations unless the user opts in.
