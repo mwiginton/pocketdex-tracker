@@ -13,6 +13,10 @@ import {
 export type RecommendationRow =
   Database["public"]["Functions"]["get_pack_recommendation_rows"]["Returns"][number];
 
+export const CURRENTLY_UNAVAILABLE_RECOMMENDATION_PACK_IDS = new Set([
+  "a4b-deluxe-pack-ex",
+]);
+
 export async function loadPackRecommendations(
   supabase: SupabaseClient<Database>,
   scope?: RecommendationScope,
@@ -33,11 +37,17 @@ export function buildPackRecommendationsFromRows(
   rows: RecommendationRow[],
   scope?: RecommendationScope,
 ): PackRecommendation[] {
+  const recommendationRows = scope?.includeUnavailablePacks
+    ? rows
+    : rows.filter(
+        (row) =>
+          !CURRENTLY_UNAVAILABLE_RECOMMENDATION_PACK_IDS.has(row.pack_id),
+      );
   const packsById = new Map<string, RecommendationPack>();
   const missingCardsById = new Map<string, RecommendationMissingCard>();
   const cardPackOdds: RecommendationCardOdds[] = [];
 
-  for (const row of rows) {
+  for (const row of recommendationRows) {
     packsById.set(row.pack_id, {
       id: row.pack_id,
       name: row.pack_name,

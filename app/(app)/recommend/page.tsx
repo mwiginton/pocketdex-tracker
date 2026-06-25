@@ -1,12 +1,18 @@
 import { ChevronDown, Sparkles } from "lucide-react";
 import Link from "next/link";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { loadPackRecommendations } from "@/lib/recommendation/data";
+import { PackAvailabilityToggle } from "@/components/recommendation/pack-availability-toggle";
+import { INCLUDE_UNAVAILABLE_PACKS_COOKIE } from "@/lib/recommendation/preferences";
+import {
+  CURRENTLY_UNAVAILABLE_RECOMMENDATION_PACK_IDS,
+  loadPackRecommendations,
+} from "@/lib/recommendation/data";
 import { createClient } from "@/lib/supabase/server";
 
 type RecommendPageProps = {
@@ -22,6 +28,7 @@ type RecommendationSet = {
 
 async function RecommendContent({ searchParams }: RecommendPageProps) {
   const selectedSetId = getSelectedSetId(await searchParams);
+  const includeUnavailablePacks = await getIncludeUnavailablePacksPreference();
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.getUser();
 
@@ -40,7 +47,10 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
   }
 
   const selectedSet = sets.find((set) => set.id === selectedSetId);
-  const scope = selectedSet ? { setId: selectedSet.id } : undefined;
+  const scope = {
+    ...(selectedSet ? { setId: selectedSet.id } : {}),
+    includeUnavailablePacks,
+  };
   const recommendations = await loadPackRecommendations(supabase, scope);
   const topRecommendation = recommendations[0];
 
@@ -56,6 +66,9 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
       </header>
 
       <ScopeToggle sets={sets} selectedSet={selectedSet} />
+      <PackAvailabilityToggle
+        includeUnavailablePacks={includeUnavailablePacks}
+      />
 
       {topRecommendation ? (
         <div className="space-y-4">
@@ -78,11 +91,18 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
                   <Badge variant="secondary">
                     {topRecommendation.pack.set_id}
                   </Badge>
+                  {isUnavailableRecommendationPack(
+                    topRecommendation.pack.id,
+                  ) ? (
+                    <Badge variant="outline">Unavailable</Badge>
+                  ) : null}
                 </div>
                 <p className="mt-2 text-sm text-muted-foreground">
-                  {selectedSet
-                    ? `Best expected value for ${selectedSet.name}.`
-                    : "Best current expected value across your missing cards."}
+                  {isUnavailableRecommendationPack(topRecommendation.pack.id)
+                    ? "Best expected value including unavailable limited-time packs."
+                    : selectedSet
+                      ? `Best expected value for ${selectedSet.name}.`
+                      : "Best current expected value across your missing cards."}
                 </p>
               </div>
             </div>
@@ -112,6 +132,11 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
                             <Badge variant="outline">
                               {recommendation.pack.set_id}
                             </Badge>
+                            {isUnavailableRecommendationPack(
+                              recommendation.pack.id,
+                            ) ? (
+                              <Badge variant="outline">Unavailable</Badge>
+                            ) : null}
                           </div>
                           <p className="mt-1 text-sm text-muted-foreground">
                             {recommendation.missingCardCount} missing{" "}
@@ -187,7 +212,7 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
         </div>
       ) : (
         <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-          No pack recommendations are available for this scope.
+          No openable pack recommendations are available for this scope.
         </div>
       )}
     </div>
@@ -278,6 +303,16 @@ function getSelectedSetId(searchParams: Awaited<RecommendPageProps["searchParams
   return typeof searchParams.setId === "string" && searchParams.setId.length > 0
     ? searchParams.setId
     : undefined;
+}
+
+async function getIncludeUnavailablePacksPreference() {
+  const cookieStore = await cookies();
+
+  return cookieStore.get(INCLUDE_UNAVAILABLE_PACKS_COOKIE)?.value === "true";
+}
+
+function isUnavailableRecommendationPack(packId: string) {
+  return CURRENTLY_UNAVAILABLE_RECOMMENDATION_PACK_IDS.has(packId);
 }
 
 export default function RecommendPage({ searchParams }: RecommendPageProps) {

@@ -58,6 +58,67 @@ describe("buildPackRecommendationsFromRows", () => {
       ],
     );
   });
+
+  it("excludes currently unavailable limited-time packs by default", () => {
+    const recommendations = buildPackRecommendationsFromRows([
+      recommendationRow({
+        pack_id: "a4b-deluxe-pack-ex",
+        pack_name: "Deluxe Pack: ex",
+        pack_set_id: "A4b",
+        pack_slug: "deluxe-pack-ex",
+        card_id: "card-deluxe",
+        card_name: "Deluxe card",
+        card_collector_number: 3,
+        pull_probability: 0.9,
+      }),
+      recommendationRow({
+        pack_id: "pack-mewtwo",
+        pack_name: "Mewtwo",
+        card_id: "card-mew",
+        card_name: "Mew",
+        card_collector_number: 2,
+        pull_probability: 0.4,
+      }),
+    ]);
+
+    assert.deepEqual(
+      recommendations.map((recommendation) => recommendation.pack.id),
+      ["pack-mewtwo"],
+    );
+  });
+
+  it("includes currently unavailable limited-time packs when opted in", () => {
+    const recommendations = buildPackRecommendationsFromRows(
+      [
+        recommendationRow({
+          pack_id: "a4b-deluxe-pack-ex",
+          pack_name: "Deluxe Pack: ex",
+          pack_set_id: "A4b",
+          pack_slug: "deluxe-pack-ex",
+          card_id: "card-deluxe",
+          card_name: "Deluxe card",
+          card_collector_number: 3,
+          pull_probability: 0.9,
+        }),
+        recommendationRow({
+          pack_id: "pack-mewtwo",
+          pack_name: "Mewtwo",
+          card_id: "card-mew",
+          card_name: "Mew",
+          card_collector_number: 2,
+          pull_probability: 0.4,
+        }),
+      ],
+      {
+        includeUnavailablePacks: true,
+      },
+    );
+
+    assert.deepEqual(
+      recommendations.map((recommendation) => recommendation.pack.id),
+      ["a4b-deluxe-pack-ex", "pack-mewtwo"],
+    );
+  });
 });
 
 function recommendationRow(

@@ -17,6 +17,7 @@ export type RecommendationCardOdds = Pick<
 
 export type RecommendationScope = {
   setId?: string;
+  includeUnavailablePacks?: boolean;
 };
 
 export type PackRecommendationCard = {
