@@ -1,8 +1,10 @@
+import { CheckCircle2, Target } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { loadHomeCompletion } from "@/lib/home/data";
 import { createClient } from "@/lib/supabase/server";
+import { cn } from "@/lib/utils";
 
 async function HomeDashboard() {
   const supabase = await createClient();
@@ -28,43 +30,145 @@ async function HomeDashboard() {
         aria-label="Overall collection completion"
         className="rounded-xl border bg-card p-4 shadow-sm sm:p-5"
       >
-        <p className="text-sm font-medium text-muted-foreground">
-          Overall completion
-        </p>
-        <p className="mt-1 text-3xl font-bold tabular-nums">
-          {formatPercent(completion.summary.completionRatio)}
-        </p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          {completion.summary.ownedCards} of {completion.summary.totalCards}{" "}
-          cards owned across {setCount} {setCount === 1 ? "set" : "sets"}.
-        </p>
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              Overall completion
+            </p>
+            <p className="mt-1 text-4xl font-bold tracking-tight tabular-nums">
+              {formatPercent(completion.summary.completionRatio)}
+            </p>
+          </div>
+          <span
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"
+            aria-hidden="true"
+          >
+            <CheckCircle2 className="h-5 w-5" />
+          </span>
+        </div>
+        <ProgressBar
+          className="mt-5"
+          label="Overall collection progress"
+          value={completion.summary.completionRatio}
+        />
+        <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          <span>
+            <strong className="font-semibold text-foreground tabular-nums">
+              {completion.summary.ownedCards}
+            </strong>{" "}
+            owned
+          </span>
+          <span>
+            <strong className="font-semibold text-foreground tabular-nums">
+              {completion.summary.missingCards}
+            </strong>{" "}
+            missing
+          </span>
+          <span>
+            <strong className="font-semibold text-foreground tabular-nums">
+              {completion.summary.totalCards}
+            </strong>{" "}
+            total across {setCount} {setCount === 1 ? "set" : "sets"}
+          </span>
+        </div>
+      </section>
+
+      <section
+        aria-label="Closest set to finishing"
+        className="mt-4 rounded-xl border bg-card p-4 shadow-sm sm:p-5"
+      >
+        <div className="flex items-start gap-3">
+          <span
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground"
+            aria-hidden="true"
+          >
+            <Target className="h-5 w-5" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-muted-foreground">
+              Closest to finishing
+            </p>
+            {completion.closestSet ? (
+              <>
+                <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <h2 className="text-xl font-bold leading-tight">
+                    {completion.closestSet.set_name}
+                  </h2>
+                  <span className="text-sm font-medium text-muted-foreground">
+                    {completion.closestSet.missing_cards}{" "}
+                    {completion.closestSet.missing_cards === 1
+                      ? "card"
+                      : "cards"}{" "}
+                    left
+                  </span>
+                </div>
+                <ProgressBar
+                  className="mt-4"
+                  label={`${completion.closestSet.set_name} progress`}
+                  value={completion.closestSet.completionRatio}
+                />
+                <p className="mt-2 text-sm text-muted-foreground">
+                  {completion.closestSet.owned_cards} of{" "}
+                  {completion.closestSet.total_cards} cards owned.
+                </p>
+              </>
+            ) : (
+              <p className="mt-1 text-xl font-bold leading-tight">
+                Every tracked set is complete.
+              </p>
+            )}
+          </div>
+        </div>
       </section>
 
       <section aria-label="Set completion totals" className="mt-6">
-        <h2 className="text-base font-semibold">Set totals</h2>
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground">
+              By set
+            </p>
+            <h2 className="mt-1 text-xl font-bold tracking-tight">
+              Progress list
+            </h2>
+          </div>
+          <p className="text-sm text-muted-foreground tabular-nums">
+            {setCount} {setCount === 1 ? "set" : "sets"}
+          </p>
+        </div>
         {completion.sets.length > 0 ? (
           <ul className="mt-3 divide-y rounded-xl border bg-card shadow-sm">
             {completion.sets.map((set) => (
               <li
                 key={set.set_id}
-                className="flex items-center justify-between gap-4 p-4"
+                className={cn(
+                  "p-4",
+                  completion.closestSet?.set_id === set.set_id &&
+                    "bg-accent/50",
+                )}
               >
-                <div className="min-w-0">
-                  <h3 className="truncate text-sm font-semibold">
-                    {set.set_name}
-                  </h3>
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {set.set_id}
-                  </p>
+                <div className="flex items-start justify-between gap-4">
+                  <div className="min-w-0">
+                    <h3 className="truncate text-sm font-semibold">
+                      {set.set_name}
+                    </h3>
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {set.set_id}
+                    </p>
+                  </div>
+                  <div className="shrink-0 text-right">
+                    <p className="text-sm font-semibold tabular-nums">
+                      {formatPercent(set.completionRatio)}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground tabular-nums">
+                      {set.owned_cards}/{set.total_cards}
+                    </p>
+                  </div>
                 </div>
-                <div className="shrink-0 text-right">
-                  <p className="text-sm font-semibold tabular-nums">
-                    {formatPercent(set.completionRatio)}
-                  </p>
-                  <p className="mt-1 text-xs text-muted-foreground tabular-nums">
-                    {set.owned_cards}/{set.total_cards}
-                  </p>
-                </div>
+                <ProgressBar
+                  className="mt-3"
+                  label={`${set.set_name} progress`}
+                  value={set.completionRatio}
+                />
               </li>
             ))}
           </ul>
@@ -99,6 +203,34 @@ function formatPercent(value: number) {
     maximumFractionDigits: 0,
     style: "percent",
   }).format(value);
+}
+
+function ProgressBar({
+  className,
+  label,
+  value,
+}: {
+  className?: string;
+  label: string;
+  value: number;
+}) {
+  const percent = Math.max(0, Math.min(100, Math.round(value * 100)));
+
+  return (
+    <div
+      aria-label={label}
+      aria-valuemax={100}
+      aria-valuemin={0}
+      aria-valuenow={percent}
+      className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
+      role="progressbar"
+    >
+      <div
+        className="h-full rounded-full bg-primary transition-[width]"
+        style={{ width: `${percent}%` }}
+      />
+    </div>
+  );
 }
 
 export default function HomePage() {
