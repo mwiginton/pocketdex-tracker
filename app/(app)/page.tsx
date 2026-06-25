@@ -1,7 +1,9 @@
-import { CheckCircle2, Target } from "lucide-react";
+import { ArrowRight, CheckCircle2, Sparkles, Target } from "lucide-react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import { Button } from "@/components/ui/button";
 import { loadHomeCompletion } from "@/lib/home/data";
 import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
@@ -71,29 +73,39 @@ async function HomeDashboard() {
             total across {setCount} {setCount === 1 ? "set" : "sets"}
           </span>
         </div>
+        <Button asChild className="mt-5 min-h-11 w-full sm:w-auto">
+          <Link href="/recommend">
+            <Sparkles aria-hidden="true" />
+            What should I open?
+          </Link>
+        </Button>
       </section>
 
-      <section
-        aria-label="Closest set to finishing"
-        className="mt-4 rounded-xl border bg-card p-4 shadow-sm sm:p-5"
-      >
-        <div className="flex items-start gap-3">
+      <section aria-label="Closest set to finishing" className="mt-4">
+        <div className="rounded-xl border bg-card p-4 shadow-sm sm:p-5">
           <span
             className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-secondary text-secondary-foreground"
             aria-hidden="true"
           >
             <Target className="h-5 w-5" />
           </span>
-          <div className="min-w-0 flex-1">
+          <div className="mt-3 min-w-0">
             <p className="text-sm font-medium text-muted-foreground">
               Closest to finishing
             </p>
             {completion.closestSet ? (
-              <>
+              <Link
+                href={`/sets/${encodeURIComponent(completion.closestSet.set_id)}`}
+                className="-mx-2 mt-1 block rounded-md px-2 py-1 transition hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              >
                 <div className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <h2 className="text-xl font-bold leading-tight">
                     {completion.closestSet.set_name}
                   </h2>
+                  <ArrowRight
+                    className="h-4 w-4 text-muted-foreground"
+                    aria-hidden="true"
+                  />
                   <span className="text-sm font-medium text-muted-foreground">
                     {completion.closestSet.missing_cards}{" "}
                     {completion.closestSet.missing_cards === 1
@@ -111,7 +123,7 @@ async function HomeDashboard() {
                   {completion.closestSet.owned_cards} of{" "}
                   {completion.closestSet.total_cards} cards owned.
                 </p>
-              </>
+              </Link>
             ) : (
               <p className="mt-1 text-xl font-bold leading-tight">
                 Every tracked set is complete.
@@ -141,34 +153,45 @@ async function HomeDashboard() {
               <li
                 key={set.set_id}
                 className={cn(
-                  "p-4",
+                  "transition",
                   completion.closestSet?.set_id === set.set_id &&
                     "bg-accent/50",
                 )}
               >
-                <div className="flex items-start justify-between gap-4">
-                  <div className="min-w-0">
-                    <h3 className="truncate text-sm font-semibold">
-                      {set.set_name}
-                    </h3>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      {set.set_id}
-                    </p>
+                <Link
+                  href={`/sets/${encodeURIComponent(set.set_id)}`}
+                  className="block p-4 transition hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <h3 className="truncate text-sm font-semibold">
+                        {set.set_name}
+                      </h3>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {set.set_id}
+                      </p>
+                    </div>
+                    <div className="flex shrink-0 items-start gap-3 text-right">
+                      <div>
+                        <p className="text-sm font-semibold tabular-nums">
+                          {formatPercent(set.completionRatio)}
+                        </p>
+                        <p className="mt-1 text-xs text-muted-foreground tabular-nums">
+                          {set.owned_cards}/{set.total_cards}
+                        </p>
+                      </div>
+                      <ArrowRight
+                        className="mt-0.5 h-4 w-4 text-muted-foreground"
+                        aria-hidden="true"
+                      />
+                    </div>
                   </div>
-                  <div className="shrink-0 text-right">
-                    <p className="text-sm font-semibold tabular-nums">
-                      {formatPercent(set.completionRatio)}
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground tabular-nums">
-                      {set.owned_cards}/{set.total_cards}
-                    </p>
-                  </div>
-                </div>
-                <ProgressBar
-                  className="mt-3"
-                  label={`${set.set_name} progress`}
-                  value={set.completionRatio}
-                />
+                  <ProgressBar
+                    className="mt-3"
+                    label={`${set.set_name} progress`}
+                    value={set.completionRatio}
+                  />
+                </Link>
               </li>
             ))}
           </ul>
@@ -222,7 +245,10 @@ function ProgressBar({
       aria-valuemax={100}
       aria-valuemin={0}
       aria-valuenow={percent}
-      className={cn("h-2 w-full overflow-hidden rounded-full bg-muted", className)}
+      className={cn(
+        "h-2 w-full overflow-hidden rounded-full bg-muted",
+        className,
+      )}
       role="progressbar"
     >
       <div
