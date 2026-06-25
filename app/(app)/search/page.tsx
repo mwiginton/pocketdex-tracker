@@ -1,10 +1,13 @@
 import { Search as SearchIcon, X } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { Badge } from "@/components/ui/badge";
+import {
+  SearchResultsList,
+  type SearchOwnershipFilter,
+  type SearchResultCard,
+} from "@/components/search-results-list";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -20,10 +23,8 @@ type SearchPageProps = {
   }>;
 };
 
-type OwnershipFilter = "" | "missing" | "owned";
-
 type SearchFilters = {
-  owned: OwnershipFilter;
+  owned: SearchOwnershipFilter;
   q: string;
   rarity: string;
   setId: string;
@@ -163,6 +164,13 @@ async function SearchContent({ searchParams }: SearchPageProps) {
     throw new Error(error.message);
   }
 
+  const resultCards: SearchResultCard[] = cards.map(
+    ({ user_cards, ...card }) => ({
+      ...card,
+      isOwned: user_cards.length > 0,
+    }),
+  );
+
   return (
     <div className="py-6 sm:py-8">
       <header className="mb-6">
@@ -276,83 +284,12 @@ async function SearchContent({ searchParams }: SearchPageProps) {
         </section>
       </form>
 
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="text-sm text-muted-foreground" aria-live="polite">
-          {getResultSummary(cards.length, filters)}
-        </p>
-        {cards.length === RESULT_LIMIT ? (
-          <p className="text-xs text-muted-foreground">
-            First {RESULT_LIMIT} shown
-          </p>
-        ) : null}
-      </div>
-
-      {cards.length > 0 ? (
-        <ul className="divide-y overflow-hidden rounded-xl border bg-card shadow-sm">
-          {cards.map((card) => (
-            <li key={card.id}>
-              <div className="flex gap-3 p-3 sm:p-4">
-                <div className="relative h-20 w-14 shrink-0 overflow-hidden rounded-md bg-muted sm:h-24 sm:w-16">
-                  {card.image_url ? (
-                    <Image
-                      src={card.image_url}
-                      alt={`${card.name} card`}
-                      fill
-                      sizes="64px"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-full items-center justify-center p-2 text-center text-[10px] text-muted-foreground">
-                      No image
-                    </div>
-                  )}
-                </div>
-
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <h2 className="truncate text-base font-semibold leading-tight">
-                        {card.name}
-                      </h2>
-                      <Link
-                        href={`/sets/${encodeURIComponent(card.set_id)}`}
-                        className="mt-1 inline-block rounded-sm text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                      >
-                        {card.sets?.name ?? card.set_id}
-                      </Link>
-                    </div>
-                    <span className="shrink-0 text-sm tabular-nums text-muted-foreground">
-                      #{card.collector_number}
-                    </span>
-                  </div>
-
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    <Badge
-                      variant={isOwned(card) ? "default" : "outline"}
-                      className="capitalize"
-                    >
-                      {isOwned(card) ? "Owned" : "Missing"}
-                    </Badge>
-                    <Badge variant="secondary" className="capitalize">
-                      {formatToken(card.rarity)}
-                    </Badge>
-                    <Badge variant="outline" className="capitalize">
-                      {formatToken(card.energy_type ?? card.category)}
-                    </Badge>
-                    <Badge variant="outline">{card.set_id}</Badge>
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <div className="rounded-xl border border-dashed p-8 text-center text-sm text-muted-foreground">
-          {hasActiveFilters(filters)
-            ? "No cards match that search."
-            : "No cards are available yet."}
-        </div>
-      )}
+      <SearchResultsList
+        cards={resultCards}
+        filters={filters}
+        resultLimit={RESULT_LIMIT}
+        userId={authData.user.id}
+      />
     </div>
   );
 }
@@ -418,7 +355,7 @@ function normalizeFilterValue(
 
 function normalizeOwnershipFilter(
   value: string | string[] | undefined,
-): OwnershipFilter {
+): SearchOwnershipFilter {
   const rawValue = getSingleSearchParam(value);
 
   return rawValue === "owned" || rawValue === "missing" ? rawValue : "";
@@ -450,26 +387,6 @@ function hasActiveFilters(filters: SearchFilters) {
       filters.type ||
       filters.owned,
   );
-}
-
-function getResultSummary(count: number, filters: SearchFilters) {
-  const resultText = `${count} ${count === 1 ? "card" : "cards"}`;
-
-  if (filters.q) {
-    return `${resultText} for "${filters.q}"${hasStructuredFilters(filters) ? " with filters" : ""}`;
-  }
-
-  return hasStructuredFilters(filters)
-    ? `${resultText} matching filters`
-    : `Showing ${resultText}`;
-}
-
-function hasStructuredFilters(filters: SearchFilters) {
-  return Boolean(filters.setId || filters.rarity || filters.type || filters.owned);
-}
-
-function isOwned(card: SearchCard) {
-  return card.user_cards.length > 0;
 }
 
 function formatToken(value: string) {
