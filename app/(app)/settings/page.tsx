@@ -1,8 +1,7 @@
-import { Database, Download, Upload } from "lucide-react";
+import { Download, Upload } from "lucide-react";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,14 +23,6 @@ type SettingsPageProps = {
   }>;
 };
 
-type CardDatabaseSet = {
-  data_version: string | null;
-  id: string;
-  name: string;
-  total_card_count: number | null;
-  updated_at: string;
-};
-
 async function SettingsContent({ searchParams }: SettingsPageProps) {
   const importFeedback = getImportFeedback(await searchParams);
   const supabase = await createClient();
@@ -41,32 +32,16 @@ async function SettingsContent({ searchParams }: SettingsPageProps) {
     redirect("/auth/login");
   }
 
-  const [
-    { count, error: userCardsError },
-    { data: sets, error: setsError },
-  ] = await Promise.all([
-    supabase
-      .from("user_cards")
-      .select("card_id", { count: "exact", head: true })
-      .eq("user_id", authData.user.id),
-    supabase
-      .from("sets")
-      .select("id, name, total_card_count, data_version, updated_at")
-      .order("release_date", { ascending: false, nullsFirst: false })
-      .order("id", { ascending: true })
-      .returns<CardDatabaseSet[]>(),
-  ]);
+  const { count, error } = await supabase
+    .from("user_cards")
+    .select("card_id", { count: "exact", head: true })
+    .eq("user_id", authData.user.id);
 
-  if (userCardsError || setsError) {
-    throw new Error(
-      userCardsError?.message ??
-        setsError?.message ??
-        "Unable to load settings.",
-    );
+  if (error) {
+    throw new Error(error.message);
   }
 
   const ownedCardCount = count ?? 0;
-  const databaseStatus = getCardDatabaseStatus(sets ?? []);
 
   return (
     <div className="py-6 sm:py-8">
@@ -78,85 +53,6 @@ async function SettingsContent({ searchParams }: SettingsPageProps) {
       </header>
 
       <div className="grid gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Card database</CardTitle>
-            <CardDescription>
-              Check the set data version currently loaded in PocketDex.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="mb-4 grid gap-3 sm:grid-cols-3">
-              <div className="rounded-lg border bg-muted/40 px-4 py-3">
-                <p className="text-xs font-medium uppercase text-muted-foreground">
-                  Version
-                </p>
-                <p className="mt-1 text-lg font-semibold">
-                  {databaseStatus.versionLabel}
-                </p>
-              </div>
-              <div className="rounded-lg border bg-muted/40 px-4 py-3">
-                <p className="text-xs font-medium uppercase text-muted-foreground">
-                  Last updated
-                </p>
-                <p className="mt-1 text-lg font-semibold">
-                  {databaseStatus.lastUpdatedLabel}
-                </p>
-              </div>
-              <div className="rounded-lg border bg-muted/40 px-4 py-3">
-                <p className="text-xs font-medium uppercase text-muted-foreground">
-                  Coverage
-                </p>
-                <p className="mt-1 text-lg font-semibold">
-                  {databaseStatus.setCount.toLocaleString()}{" "}
-                  {databaseStatus.setCount === 1 ? "set" : "sets"}
-                </p>
-              </div>
-            </div>
-
-            {databaseStatus.versionCount > 1 ? (
-              <p className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-950 dark:text-amber-100">
-                Multiple data versions are present. Newer set rows may have
-                been refreshed more recently than older ones.
-              </p>
-            ) : null}
-
-            {databaseStatus.unversionedCount > 0 ? (
-              <p className="mb-4 rounded-lg border px-4 py-3 text-sm text-muted-foreground">
-                {databaseStatus.unversionedCount.toLocaleString()}{" "}
-                {databaseStatus.unversionedCount === 1 ? "set is" : "sets are"}{" "}
-                still unversioned, but their database update dates are shown.
-              </p>
-            ) : null}
-
-            <ul className="divide-y overflow-hidden rounded-lg border">
-              {databaseStatus.sets.map((set) => (
-                <li
-                  key={set.id}
-                  className="flex items-center gap-3 px-4 py-3"
-                >
-                  <Database
-                    className="h-4 w-4 shrink-0 text-muted-foreground"
-                    aria-hidden="true"
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-medium">{set.name}</p>
-                    <p className="text-xs text-muted-foreground">
-                      Updated {formatDateTime(set.updated_at)}
-                      {set.total_card_count
-                        ? ` - ${set.total_card_count.toLocaleString()} cards`
-                        : ""}
-                    </p>
-                  </div>
-                  <Badge variant={set.data_version ? "secondary" : "outline"}>
-                    {set.data_version ?? "Unversioned"}
-                  </Badge>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-
         <Card>
           <CardHeader>
             <CardTitle>Export collection</CardTitle>
@@ -249,7 +145,7 @@ function SettingsSkeleton() {
       <div className="h-4 w-16 rounded bg-muted" />
       <div className="mt-2 h-9 w-44 rounded bg-muted" />
       <div className="mt-6 grid gap-4">
-        {Array.from({ length: 3 }, (_, index) => (
+        {Array.from({ length: 2 }, (_, index) => (
           <div key={index} className="rounded-xl border p-6">
             <div className="h-5 w-40 rounded bg-muted" />
             <div className="mt-2 h-4 w-full max-w-sm rounded bg-muted" />
@@ -319,32 +215,4 @@ function getPositiveInteger(value: string | string[] | undefined) {
 
 function getSingleSearchParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
-}
-
-function getCardDatabaseStatus(sets: CardDatabaseSet[]) {
-  const versions = Array.from(
-    new Set(sets.flatMap((set) => (set.data_version ? [set.data_version] : []))),
-  ).sort((first, second) => second.localeCompare(first, undefined, { numeric: true }));
-  const latestUpdatedAt = sets.reduce<string | null>((latest, set) => {
-    if (!latest) {
-      return set.updated_at;
-    }
-
-    return new Date(set.updated_at) > new Date(latest) ? set.updated_at : latest;
-  }, null);
-
-  return {
-    lastUpdatedLabel: latestUpdatedAt ? formatDateTime(latestUpdatedAt) : "Unknown",
-    setCount: sets.length,
-    sets,
-    unversionedCount: sets.filter((set) => !set.data_version).length,
-    versionCount: versions.length,
-    versionLabel: versions[0] ?? "Unversioned",
-  };
-}
-
-function formatDateTime(value: string) {
-  return new Intl.DateTimeFormat("en", {
-    dateStyle: "medium",
-  }).format(new Date(value));
 }
