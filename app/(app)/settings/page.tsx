@@ -1,5 +1,6 @@
 import { Database, Download, Upload } from "lucide-react";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -31,7 +32,7 @@ type CardDatabaseSet = {
   updated_at: string;
 };
 
-export default async function SettingsPage({ searchParams }: SettingsPageProps) {
+async function SettingsContent({ searchParams }: SettingsPageProps) {
   const importFeedback = getImportFeedback(await searchParams);
   const supabase = await createClient();
   const { data: authData, error: authError } = await supabase.auth.getUser();
@@ -143,7 +144,7 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
                     <p className="text-xs text-muted-foreground">
                       Updated {formatDateTime(set.updated_at)}
                       {set.total_card_count
-                        ? ` · ${set.total_card_count.toLocaleString()} cards`
+                        ? ` - ${set.total_card_count.toLocaleString()} cards`
                         : ""}
                     </p>
                   </div>
@@ -239,6 +240,36 @@ export default async function SettingsPage({ searchParams }: SettingsPageProps) 
         </Card>
       </div>
     </div>
+  );
+}
+
+function SettingsSkeleton() {
+  return (
+    <div className="animate-pulse py-6 sm:py-8" aria-label="Loading settings">
+      <div className="h-4 w-16 rounded bg-muted" />
+      <div className="mt-2 h-9 w-44 rounded bg-muted" />
+      <div className="mt-6 grid gap-4">
+        {Array.from({ length: 3 }, (_, index) => (
+          <div key={index} className="rounded-xl border p-6">
+            <div className="h-5 w-40 rounded bg-muted" />
+            <div className="mt-2 h-4 w-full max-w-sm rounded bg-muted" />
+            <div className="mt-6 grid gap-3 sm:grid-cols-3">
+              <div className="h-20 rounded-lg bg-muted" />
+              <div className="h-20 rounded-lg bg-muted" />
+              <div className="h-20 rounded-lg bg-muted" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export default function SettingsPage({ searchParams }: SettingsPageProps) {
+  return (
+    <Suspense fallback={<SettingsSkeleton />}>
+      <SettingsContent searchParams={searchParams} />
+    </Suspense>
   );
 }
 
