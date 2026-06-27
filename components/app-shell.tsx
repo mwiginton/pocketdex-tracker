@@ -5,6 +5,7 @@ import {
   DesktopNavigation,
   MobileNavigation,
 } from "@/components/app-navigation";
+import { LogoutButton } from "@/components/logout-button";
 
 type AppShellProps = {
   children: React.ReactNode;
@@ -19,9 +20,12 @@ export function AppShell({ children }: AppShellProps) {
             <span className="text-base font-bold">PocketDex</span>
             <span className="text-sm text-muted-foreground">Tracker</span>
           </Link>
-          <Suspense fallback={<div className="hidden h-9 md:block" />}>
-            <DesktopNavigation />
-          </Suspense>
+          <div className="flex items-center gap-2">
+            <Suspense fallback={<div className="hidden h-9 md:block" />}>
+              <DesktopNavigation />
+            </Suspense>
+            <LogoutButton className="shrink-0" />
+          </div>
         </div>
       </header>
 
