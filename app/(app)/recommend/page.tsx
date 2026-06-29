@@ -1,13 +1,12 @@
 import { ChevronDown, Sparkles } from "lucide-react";
-import Link from "next/link";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { PackAvailabilityToggle } from "@/components/recommendation/pack-availability-toggle";
+import { ScopePicker } from "@/components/recommendation/scope-picker";
 import { INCLUDE_UNAVAILABLE_PACKS_COOKIE } from "@/lib/recommendation/preferences";
 import {
   CURRENTLY_UNAVAILABLE_RECOMMENDATION_PACK_IDS,
@@ -19,11 +18,6 @@ type RecommendPageProps = {
   searchParams: Promise<{
     setId?: string | string[];
   }>;
-};
-
-type RecommendationSet = {
-  id: string;
-  name: string;
 };
 
 async function RecommendContent({ searchParams }: RecommendPageProps) {
@@ -65,7 +59,7 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
         </h1>
       </header>
 
-      <ScopeToggle sets={sets} selectedSet={selectedSet} />
+      <ScopePicker sets={sets} selectedSet={selectedSet} />
       <PackAvailabilityToggle
         includeUnavailablePacks={includeUnavailablePacks}
       />
@@ -216,48 +210,6 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
         </div>
       )}
     </div>
-  );
-}
-
-function ScopeToggle({
-  sets,
-  selectedSet,
-}: {
-  sets: RecommendationSet[];
-  selectedSet?: RecommendationSet;
-}) {
-  return (
-    <section aria-label="Recommendation scope" className="mb-6 space-y-3">
-      <p className="text-sm font-medium text-muted-foreground">Scope</p>
-      <div className="flex gap-2 overflow-x-auto pb-1">
-        <Button
-          asChild
-          type="button"
-          size="sm"
-          variant={selectedSet ? "outline" : "default"}
-        >
-          <Link href="/recommend" aria-current={selectedSet ? undefined : "page"}>
-            Whole collection
-          </Link>
-        </Button>
-        {sets.map((set) => (
-          <Button
-            asChild
-            key={set.id}
-            type="button"
-            size="sm"
-            variant={selectedSet?.id === set.id ? "default" : "outline"}
-          >
-            <Link
-              href={`/recommend?setId=${encodeURIComponent(set.id)}`}
-              aria-current={selectedSet?.id === set.id ? "page" : undefined}
-            >
-              {set.name}
-            </Link>
-          </Button>
-        ))}
-      </div>
-    </section>
   );
 }
 
