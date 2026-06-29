@@ -45,7 +45,7 @@ export function ScopePicker({ selectedSet, sets }: ScopePickerProps) {
           <Button
             type="button"
             variant="outline"
-            className="w-full justify-between sm:w-80"
+            className="w-full justify-between border-[hsl(var(--app-blue)/0.3)] bg-[hsl(var(--app-blue)/0.04)] sm:w-80"
           >
             <span className="min-w-0 truncate text-left">
               {selectedSet ? selectedSet.name : "Whole collection"}

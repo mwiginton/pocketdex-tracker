@@ -51,12 +51,16 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
   return (
     <div className="py-6 sm:py-8">
       <header className="mb-6">
-        <p className="text-sm font-medium text-muted-foreground">
+        <p className="text-sm font-medium text-[hsl(var(--app-blue))]">
           Pack recommendation
         </p>
         <h1 className="mt-1 text-3xl font-bold tracking-tight">
           What should I open?
         </h1>
+        <div
+          aria-hidden="true"
+          className="mt-3 h-1 w-24 rounded-full bg-[linear-gradient(90deg,hsl(var(--app-blue)),hsl(var(--app-yellow)),hsl(var(--app-red)))]"
+        />
       </header>
 
       <ScopePicker sets={sets} selectedSet={selectedSet} />
@@ -68,11 +72,15 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
         <div className="space-y-4">
           <section
             aria-label="Top recommendation"
-            className="rounded-xl border bg-card p-4 shadow-sm sm:p-5"
+            className="relative overflow-hidden rounded-xl border border-[hsl(var(--app-blue)/0.3)] bg-card bg-[linear-gradient(135deg,hsl(var(--app-blue)/0.1),hsl(var(--card))_42%,hsl(var(--app-yellow)/0.08))] p-4 shadow-sm shadow-[hsl(var(--app-blue)/0.08)] sm:p-5"
           >
+            <div
+              aria-hidden="true"
+              className="absolute inset-x-0 top-0 h-1 bg-[linear-gradient(90deg,hsl(var(--app-blue)),hsl(var(--app-yellow)),hsl(var(--app-red)))]"
+            />
             <div className="flex items-start gap-3">
               <span
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground"
+                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md bg-[hsl(var(--app-blue))] text-[hsl(var(--app-yellow))] shadow-sm shadow-[hsl(var(--app-blue)/0.35)]"
                 aria-hidden="true"
               >
                 <Sparkles className="h-5 w-5" />
@@ -82,7 +90,10 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
                   <h2 className="text-xl font-bold leading-tight">
                     {topRecommendation.pack.name}
                   </h2>
-                  <Badge variant="secondary">
+                  <Badge
+                    variant="secondary"
+                    className="border border-[hsl(var(--app-yellow)/0.35)] bg-[hsl(var(--app-yellow)/0.16)] text-foreground"
+                  >
                     {topRecommendation.pack.set_id}
                   </Badge>
                   {isUnavailableRecommendationPack(
@@ -100,7 +111,7 @@ async function RecommendContent({ searchParams }: RecommendPageProps) {
                 </p>
               </div>
             </div>
-            <p className="mt-5 text-4xl font-bold tabular-nums tracking-tight">
+            <p className="mt-5 text-4xl font-bold tabular-nums tracking-tight text-[hsl(var(--app-yellow))]">
               {formatExpectedNewCards(topRecommendation.expectedNewCards)}
               <span className="ml-2 align-middle text-base font-medium text-muted-foreground">
                 new cards / pack

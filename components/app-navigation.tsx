@@ -63,7 +63,8 @@ export function DesktopNavigation() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex h-9 items-center gap-2 rounded-md px-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-foreground",
-                  active && "bg-accent text-foreground",
+                  active &&
+                    "bg-[hsl(var(--app-blue)/0.14)] text-foreground ring-1 ring-[hsl(var(--app-blue)/0.28)] [&_svg]:text-[hsl(var(--app-yellow))]",
                 )}
               >
                 <Icon aria-hidden="true" className="h-4 w-4" />
@@ -97,7 +98,7 @@ export function MobileNavigation() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "flex h-16 min-w-0 flex-col items-center justify-center gap-1 px-1 text-[11px] font-medium text-muted-foreground transition-colors",
-                  active && "text-foreground",
+                  active && "text-foreground [&_svg]:text-[hsl(var(--app-yellow))]",
                 )}
               >
                 <Icon

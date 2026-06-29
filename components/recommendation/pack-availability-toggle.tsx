@@ -20,11 +20,12 @@ export function PackAvailabilityToggle({
   return (
     <section
       aria-label="Pack availability"
-      className="mb-6 rounded-xl border bg-card p-4 shadow-sm"
+      className="mb-6 rounded-xl border border-[hsl(var(--app-blue)/0.22)] bg-card bg-[linear-gradient(90deg,hsl(var(--app-blue)/0.06),transparent_55%)] p-4 shadow-sm"
     >
       <div className="flex items-start gap-3">
         <Checkbox
           id="include-unavailable-packs"
+          className="border-[hsl(var(--app-blue)/0.65)] data-[state=checked]:bg-[hsl(var(--app-blue))] data-[state=checked]:text-[hsl(var(--app-yellow))]"
           checked={includeUnavailablePacks}
           disabled={isPending}
           onCheckedChange={(checked) => {
