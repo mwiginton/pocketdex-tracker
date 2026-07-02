@@ -1,4 +1,4 @@
-import { Search as SearchIcon, X } from "lucide-react";
+import { Search as SearchIcon, SlidersHorizontal, X } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -64,6 +64,11 @@ type FilterOptions = {
   rarities: string[];
   sets: SearchSet[];
   types: string[];
+};
+
+type ActiveFilterChip = {
+  label: string;
+  value: string;
 };
 
 const RESULT_LIMIT = 120;
@@ -170,6 +175,8 @@ async function SearchContent({ searchParams }: SearchPageProps) {
       isOwned: user_cards.length > 0,
     }),
   );
+  const activeFilterChips = getActiveFilterChips(filters, filterOptions);
+  const structuredFilterCount = getStructuredFilterCount(filters);
 
   return (
     <div className="py-6 sm:py-8">
@@ -181,6 +188,14 @@ async function SearchContent({ searchParams }: SearchPageProps) {
       </header>
 
       <form action="/search" method="get" className="mb-5 space-y-3">
+        <input
+          type="checkbox"
+          id="search-filters-toggle"
+          className="peer sr-only"
+          defaultChecked={structuredFilterCount > 0}
+          aria-controls="search-filter-fields"
+        />
+
         <div className="flex gap-2">
           <div className="relative min-w-0 flex-1">
             <SearchIcon
@@ -198,24 +213,52 @@ async function SearchContent({ searchParams }: SearchPageProps) {
           <Button type="submit" className="h-11 shrink-0">
             Search
           </Button>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <label
+            htmlFor="search-filters-toggle"
+            className="inline-flex h-9 cursor-pointer items-center justify-center gap-2 rounded-md border border-input bg-background px-3 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-within:outline-none focus-within:ring-1 focus-within:ring-ring sm:hidden"
+          >
+            <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+            Filters
+            {structuredFilterCount > 0 ? (
+              <span className="text-muted-foreground">
+                ({structuredFilterCount})
+              </span>
+            ) : null}
+          </label>
+
+          {activeFilterChips.map((chip) => (
+            <span
+              key={chip.label}
+              className="inline-flex min-h-8 max-w-full items-center rounded-full border bg-secondary px-3 py-1 text-xs font-medium text-secondary-foreground"
+            >
+              <span className="mr-1 text-muted-foreground">{chip.label}:</span>
+              <span className="truncate">{chip.value}</span>
+            </span>
+          ))}
+
           {hasActiveFilters(filters) ? (
             <Button
               asChild
               type="button"
               variant="outline"
-              size="icon"
-              className="h-11 w-11 shrink-0"
+              size="sm"
+              className="h-9"
             >
               <Link href="/search" aria-label="Clear search and filters">
                 <X className="h-4 w-4" aria-hidden="true" />
+                Clear
               </Link>
             </Button>
           ) : null}
         </div>
 
         <section
+          id="search-filter-fields"
           aria-label="Search filters"
-          className="grid gap-3 rounded-xl border bg-card p-3 shadow-sm sm:grid-cols-2 lg:grid-cols-4"
+          className="hidden gap-3 rounded-xl border bg-card p-3 shadow-sm peer-checked:grid sm:grid sm:grid-cols-2 lg:grid-cols-4"
         >
           <div className="space-y-2">
             <Label htmlFor="search-set">Set</Label>
@@ -377,6 +420,42 @@ function formatPostgrestFilterValue(value: string) {
   }
 
   return `"${value.replaceAll("\\", "\\\\").replaceAll('"', '\\"')}"`;
+}
+
+function getActiveFilterChips(
+  filters: SearchFilters,
+  options: FilterOptions,
+): ActiveFilterChip[] {
+  const chips: ActiveFilterChip[] = [];
+
+  if (filters.setId) {
+    chips.push({
+      label: "Set",
+      value:
+        options.sets.find((set) => set.id === filters.setId)?.name ??
+        filters.setId,
+    });
+  }
+
+  if (filters.rarity) {
+    chips.push({ label: "Rarity", value: formatToken(filters.rarity) });
+  }
+
+  if (filters.type) {
+    chips.push({ label: "Type", value: formatToken(filters.type) });
+  }
+
+  if (filters.owned) {
+    chips.push({ label: "Status", value: formatToken(filters.owned) });
+  }
+
+  return chips;
+}
+
+function getStructuredFilterCount(filters: SearchFilters) {
+  return [filters.setId, filters.rarity, filters.type, filters.owned].filter(
+    Boolean,
+  ).length;
 }
 
 function hasActiveFilters(filters: SearchFilters) {
